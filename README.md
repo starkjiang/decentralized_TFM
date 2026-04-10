@@ -4,7 +4,6 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.1%2B-ee4c2c.svg)](https://pytorch.org/)
 [![TabICLv2](https://img.shields.io/badge/TabICLv2-ICML_2025-blueviolet.svg)](https://github.com/siyuanfan01/TabICL)
 [![TabPFNv2](https://img.shields.io/badge/TabPFNv2-NeurIPS_2024-orange.svg)](https://github.com/automl/TabPFN)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Empirical validation of **D-ICL** — Decentralised In-Context Learning for
 tabular foundation models — using **TabICLv2** (ICML 2025) and
@@ -347,9 +346,3 @@ result = run_dicl_clf(Xtr, ytr, Xte, yte, K=4, partition="iid",
                       backbone="tabicl", cfg=cfg, meta=meta)
 print(result["final"]["consensus"]["accuracy"])
 ```
-
----
-
-## License
-
-MIT — see [LICENSE](LICENSE).
