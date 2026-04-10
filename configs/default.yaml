@@ -1,0 +1,58 @@
+# configs/default.yaml
+# =====================
+# Default hyperparameters for D-ICL experiments.
+# These mirror the Config dataclass in dicl/config.py.
+
+datasets:
+  classification:
+    - breast_cancer
+    - wine
+    - iris
+    - digits
+    - diabetes_clf
+  regression:
+    - california
+    - diabetes_reg
+    - linnerud
+    - energy
+    - concrete
+  backbones: [tabicl, tabpfn]
+
+dicl:
+  K_values: [2, 4, 8]           # agent counts to sweep
+  T: 5                           # D-ICL rounds
+  m_0: 64                        # initial context size per agent
+  tau: 0.80                      # pseudo-label confidence threshold
+  delta_max: 32                  # max pseudo-labels added per round
+  m_max: 1024                    # maximum context reservoir size
+  alpha_dirichlet: 0.5           # Dirichlet α (non-IID heterogeneity)
+  test_size: 0.25
+  query_pool_frac: 0.30
+
+tabicl:
+  n_estimators: 16
+  batch_size: 8
+  kv_cache: true
+  avg_logits: true
+  temperature: 0.9
+  clf_checkpoint: tabicl-classifier-v2-20260212.ckpt
+  reg_checkpoint: tabicl-regressor-v2-20260212.ckpt
+
+theory:
+  sigma_base: 0.10
+  sigma_het_noniid: 0.08
+  L_lipschitz: 1.00
+
+ablations:
+  run_topology:  true
+  run_consensus: true
+  run_tau:       true
+  run_K:         true
+  run_alpha:     true
+  dataset:       breast_cancer   # dataset used for all ablations
+  K:             4
+
+output:
+  seed: 42
+  json: dicl_results.json
+  figures_dir: figures

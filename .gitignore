@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Outputs (git-ignored — regenerate with main.py)
+figures/
+outputs/
+dicl_results.json
+*.json
+
+# HuggingFace / model cache
+*.bin
+*.safetensors
+*.pt
+*.ckpt
+~/.cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
