@@ -113,7 +113,7 @@ dicl/
 ### 1. Clone
 
 ```bash
-git clone https://github.com/<your-username>/dicl.git
+git clone https://github.com/starkjiang/decentralized_TFM.git
 cd dicl
 ```
 
