@@ -20,6 +20,7 @@ class Config:
     ])
     reg_datasets: List[str] = field(default_factory=lambda: [
         "california", "diabetes_reg", "linnerud", "energy", "concrete",
+        "ames", "bike", "airfoil", "forest_fires", "abalone",
     ])
     backbones: List[str] = field(default_factory=lambda: ["tabicl", "tabpfn"])
 
