@@ -16,9 +16,13 @@ Features are standardised with StandardScaler.
 Regression targets are also standardised (meta["y_scaler"] holds the fitted scaler).
 """
 
+from io import BytesIO
 from typing import Tuple
+from urllib.request import urlopen
+from zipfile import ZipFile
 
 import numpy as np
+import pandas as pd
 from sklearn.datasets import (
     load_breast_cancer, load_wine, load_digits,
     load_iris, load_diabetes, load_linnerud,
@@ -33,6 +37,44 @@ SEED = 42
 
 # ── Types ─────────────────────────────────────────────────────────────────────
 DataTuple = Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, dict]
+
+def _frame_to_numeric_xy(X_df, y_series) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Convert an OpenML pandas feature frame + target series into numeric arrays.
+
+    This keeps the existing loaders unchanged, but lets new mixed-type datasets
+    work safely by:
+      1. converting categorical/text columns with one-hot encoding,
+      2. converting target values to floats,
+      3. dropping rows with missing target values,
+      4. filling missing feature values with column medians.
+    """
+    X_df = X_df.copy()
+    y_series = pd.Series(y_series).copy()
+
+    y_series = pd.to_numeric(y_series, errors="coerce")
+    valid_rows = y_series.notna()
+
+    X_df = X_df.loc[valid_rows]
+    y_series = y_series.loc[valid_rows]
+
+    X_df = pd.get_dummies(X_df, drop_first=False)
+    X_df = X_df.apply(pd.to_numeric, errors="coerce")
+    X_df = X_df.fillna(X_df.median(numeric_only=True)).fillna(0)
+
+    return X_df.to_numpy(dtype=float), y_series.to_numpy(dtype=float)
+
+def _read_csv_from_zip_url(url: str, filename: str) -> pd.DataFrame:
+    """
+    Read a CSV file from inside a remote zip file.
+
+    Used for the UCI Bike Sharing dataset, which provides hour.csv inside
+    Bike-Sharing-Dataset.zip.
+    """
+    with urlopen(url) as response:
+        with ZipFile(BytesIO(response.read())) as zf:
+            with zf.open(filename) as csv_file:
+                return pd.read_csv(csv_file)
 
 
 # =============================================================================
@@ -135,6 +177,85 @@ def load_reg(name: str, cfg: Config) -> DataTuple:
         X     = df.drop(columns=[target_col]).values.astype(float)
         y     = df[target_col].values.astype(float)
         label = "Concrete Strength (UCI)"
+
+    elif name == "ames":
+        X_df, y_series = fetch_openml(
+            data_id=42165,
+            as_frame=True,
+            return_X_y=True,
+        )
+        X, y = _frame_to_numeric_xy(X_df, y_series)
+        label = "Ames Housing (OpenML)"
+
+    elif name == "bike":
+        df = _read_csv_from_zip_url(
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip",
+            "hour.csv",
+        )
+
+        # cnt is the target. casual and registered are dropped because:
+        # cnt = casual + registered, so keeping them would leak the answer.
+        drop_cols = ["cnt", "casual", "registered", "instant", "dteday"]
+        X_df = df.drop(columns=[c for c in drop_cols if c in df.columns])
+        y_series = df["cnt"]
+
+        X, y = _frame_to_numeric_xy(X_df, y_series)
+        label = "Bike Sharing Demand (UCI)"
+
+    elif name == "airfoil":
+        cols = [
+            "frequency",
+            "attack_angle",
+            "chord_length",
+            "free_stream_velocity",
+            "suction_side_displacement_thickness",
+            "sound_pressure",
+        ]
+        df = pd.read_csv(
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/00291/airfoil_self_noise.dat",
+            sep=r"\s+",
+            header=None,
+            names=cols,
+        )
+
+        X = df.drop(columns=["sound_pressure"]).values.astype(float)
+        y = df["sound_pressure"].values.astype(float)
+        label = "Airfoil Self-Noise (UCI)"
+
+    elif name == "forest_fires":
+        df = pd.read_csv(
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/forest-fires/forestfires.csv"
+        )
+
+        X_df = df.drop(columns=["area"])
+        y_series = df["area"]
+
+        X, y = _frame_to_numeric_xy(X_df, y_series)
+        label = "Forest Fires (UCI)"
+
+    elif name == "abalone":
+        cols = [
+            "sex",
+            "length",
+            "diameter",
+            "height",
+            "whole_weight",
+            "shucked_weight",
+            "viscera_weight",
+            "shell_weight",
+            "rings",
+        ]
+        df = pd.read_csv(
+            "https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data",
+            header=None,
+            names=cols,
+        )
+
+        X_df = df.drop(columns=["rings"])
+        y_series = df["rings"]
+
+        X, y = _frame_to_numeric_xy(X_df, y_series)
+        label = "Abalone Age/Rings (UCI)"
 
     else:
         raise ValueError(f"Unknown regression dataset: {name!r}")
