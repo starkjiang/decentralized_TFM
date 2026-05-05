@@ -112,7 +112,7 @@ dicl/
 ### 1. Clone
 
 ```bash
-git clone https://github.com/starkjiang/decentralized_TFM.git
+git clone root-repo
 cd dicl
 ```
 
@@ -155,8 +155,8 @@ Figures → `./figures/`
 ```bash
 bash scripts/quick_test.sh
 # or:
-python main.py --rounds 2 --clf-datasets breast_cancer \
-               --reg-datasets diabetes_reg --backbones tabicl \
+python main.py --rounds 2 --clf-datasets vehicle \
+               --reg-datasets bike --backbones tabicl \
                --no-ablations
 ```
 
@@ -172,6 +172,7 @@ usage: main.py [-h]
                [--no-figures]         skip figure generation
                [--output OUTPUT]      results JSON path (default: dicl_results.json)
                [--seed SEED]          random seed (default: 42)
+               [--run_seed]           Whether to run multiple seeds and aggregate (default: True)
 ```
 
 ---
@@ -207,19 +208,19 @@ Key parameters:
 
 | Key | Dataset | Classes | Features |
 |-----|---------|---------|---------|
-| `breast_cancer` | Breast Cancer (UCI) | 2 | 30 |
-| `wine` | Wine (UCI) | 3 | 13 |
-| `iris` | Iris (Fisher) | 3 | 4 |
-| `digits` | Digits (NIST) | 10 | 64 |
-| `diabetes_clf` | Diabetes (binarised) | 2 | 10 |
+| `phoneme` | Phoneme (OpenML) | 2 | 5 |
+| `vehicle` | Vehicle (OpenML) | 4 | 18 |
+| `wine_red` | Wine-Quality-Red (OpenML) | 6 | 12 |
+| `kr_vs_kp` | Chess Kr-vs-kp (OpenML) | 2 | 36 |
+| `digits` | NIST Digits (Sklearn) | 10 | 64 |
 
 ### Regression (5 datasets)
 
 | Key | Dataset | Features |
 |-----|---------|---------|
-| `california` | California Housing | 8 |
+| `bike` | Bike Sharing (OpenML) | 15 |
 | `diabetes_reg` | Diabetes (UCI) | 10 |
-| `linnerud` | Linnerud / Exercise | 3 |
+| `Wine` | Wine-Quality (OpenML) | 3 |
 | `energy` | Energy Efficiency (UCI OpenML) | 8 |
 | `concrete` | Concrete Strength (UCI OpenML) | 8 |
 
