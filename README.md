@@ -39,6 +39,7 @@ Agents share only predictions; raw features and labels never leave the local dev
 |-----------|-------------|
 | **Single-agent** | One TFM agent using only its initial local context C_k⁰ |
 | **Centralised** | Single TFM with the full training set as context (oracle upper bound) |
+| **FedAvg** | K agents with federated learning without context enrichment |
 | **D-ICL** | K agents with consensus + pseudo-label context enrichment |
 
 **Key results:**
