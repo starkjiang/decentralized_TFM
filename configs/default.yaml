@@ -5,15 +5,15 @@
 
 datasets:
   classification:
-    - breast_cancer
-    - wine
-    - iris
+    - phoneme
+    - vehicle
+    - wine-quality-red
+    - kr-vs-kp
     - digits
-    - diabetes_clf
   regression:
-    - california
+    - bike
     - diabetes_reg
-    - linnerud
+    - wine-quality
     - energy
     - concrete
   backbones: [tabicl, tabpfn]
@@ -49,10 +49,10 @@ ablations:
   run_tau:       true
   run_K:         true
   run_alpha:     true
-  dataset:       breast_cancer   # dataset used for all ablations
+  dataset:       vehicle   # dataset used for all ablations
   K:             4
 
 output:
-  seed: 42
+  seeds: [42, 7, 123]  # seeds for multi-run experiments
   json: dicl_results.json
   figures_dir: figures
