@@ -16,10 +16,10 @@ from typing import List
 class Config:
     # ── Datasets ──────────────────────────────────────────────────────────────
     clf_datasets: List[str] = field(default_factory=lambda: [
-        "breast_cancer", "wine", "iris", "digits", "diabetes_clf",
+        "phoneme", "vehicle", "wine_red", "kr_vs_kp", "digits",
     ])
     reg_datasets: List[str] = field(default_factory=lambda: [
-        "california", "diabetes_reg", "linnerud", "energy", "concrete",
+        "bike", "diabetes_reg", "wine", "energy", "concrete",
     ])
     backbones: List[str] = field(default_factory=lambda: ["tabicl", "tabpfn"])
 
@@ -54,5 +54,14 @@ class Config:
     run_ablation_tau:       bool = True
     run_ablation_K:         bool = True
     run_ablation_alpha:     bool = True
-    ablation_dataset:       str  = "breast_cancer"
+    ablation_dataset:       str  = "vehicle"
     ablation_K:             int  = 4
+
+    # Multi-seed evaluation
+    # run_seeded wraps every main experiment condition with n_seeds independent
+    # runs (different random partitions, query pools, and pseudo-label selections)
+    # and aggregates to mean ± std.  Ablations still use a single seed for speed.
+    n_seeds: int       = 3
+    seeds:   List[int] = field(default_factory=lambda: [42, 7, 123])
+    # Filter or not.
+    filtered: bool = False

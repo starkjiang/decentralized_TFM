@@ -7,7 +7,8 @@ Usage
 -----
     python main.py                            # full run (all datasets, all ablations)
     python main.py --rounds 2                 # quick smoke-test
-    python main.py --datasets breast_cancer   # single clf dataset
+    python main.py --run_seed False           # single run with fixed seed
+    python main.py --clf-datasets vehicle     # single clf dataset
     python main.py --no-ablations             # skip ablation studies
     python main.py --output ./my_results      # custom output path
 """
@@ -26,6 +27,8 @@ from dicl import (
     Config,
     load_clf, load_reg,
     run_main,
+    set_seed,
+    run_main_seeded,
     run_ablation_topology, run_ablation_consensus,
     run_ablation_tau, run_ablation_K, run_ablation_alpha,
     print_clf_table, print_reg_table, print_ablation_table,
@@ -74,16 +77,15 @@ def parse_args() -> argparse.Namespace:
         "--seed", type=int, default=SEED,
         help=f"Random seed (default: {SEED})",
     )
+    p.add_argument(
+        "--run_seed", type=bool, default=True,
+        help=f"Whether to run multiple seeds and aggregate (default: True)",
+    )
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-
-    # ── Seed ─────────────────────────────────────────────────────────────────
-    np.random.seed(args.seed)
-    torch.manual_seed(args.seed)
-    random.seed(args.seed)
 
     # ── Config ────────────────────────────────────────────────────────────────
     cfg = Config()
@@ -110,12 +112,20 @@ def main() -> None:
     reg_cache = {ds: load_reg(ds, cfg) for ds in cfg.reg_datasets}
 
     # ── Main experiments ──────────────────────────────────────────────────────
-    print("\n" + "═" * 74 + "\n  MAIN EXPERIMENTS\n" + "═" * 74)
-    clf_res, reg_res = run_main(cfg, clf_cache, reg_cache)
-    print_clf_table(clf_res)
-    print_reg_table(reg_res)
+    if args.run_seed:
+        print("\n" + "═" * 74 + "\n  MAIN EXPERIMENTS (MULTIPLE SEEDS)\n" + "═" * 74)
+        clf_res, reg_res = run_main_seeded(cfg, clf_cache, reg_cache)
+        print_clf_table(clf_res)
+        print_reg_table(reg_res)
+    else:
+        set_seed(args.seed)
+        print("\n" + "═" * 74 + "\n  MAIN EXPERIMENTS (SINGLE SEED)\n" + "═" * 74)
+        clf_res, reg_res = run_main(cfg, clf_cache, reg_cache)
+        print_clf_table(clf_res)
+        print_reg_table(reg_res)
 
-    # ── Ablations ─────────────────────────────────────────────────────────────
+    # ── Ablations run with a single seed ──────────────────────────────────────────────────────
+    set_seed(args.seed)
     abl = {}
     ablation_schedule = [
         (cfg.run_ablation_topology,  "TOPOLOGY",  run_ablation_topology),

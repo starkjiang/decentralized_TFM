@@ -34,8 +34,10 @@ from .runner        import (
     single_agent_reg, centralised_reg,
     run_dicl_clf, run_dicl_reg,
     run_main,
+    run_main_seeded,
     run_ablation_topology, run_ablation_consensus,
     run_ablation_tau, run_ablation_K, run_ablation_alpha,
+    set_seed,
 )
 from .reporting     import (
     print_clf_table, print_reg_table, print_ablation_table,
@@ -54,8 +56,10 @@ __all__ = [
     "single_agent_reg", "centralised_reg",
     "run_dicl_clf", "run_dicl_reg",
     "run_main",
+    "run_main_seeded",
     "run_ablation_topology", "run_ablation_consensus",
     "run_ablation_tau", "run_ablation_K", "run_ablation_alpha",
+    "set_seed",
     "print_clf_table", "print_reg_table", "print_ablation_table",
     "save_results_json",
     "build_figures",
