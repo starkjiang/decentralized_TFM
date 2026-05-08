@@ -2,7 +2,7 @@
 # scripts/quick_test.sh
 # ----------------------
 # Smoke-test: 2 rounds, breast_cancer only, TabICLv2 only, no ablations.
-# Runs in ~2 minutes on a T4 GPU.
+
 
 set -euo pipefail
 
@@ -13,8 +13,8 @@ echo "Backbone: tabicl"
 echo ""
 
 python main.py \
-  --clf-datasets breast_cancer \
-  --reg-datasets diabetes_reg \
+  --clf-datasets vehicle \
+  --reg-datasets bike \
   --backbones tabicl \
   --rounds 2 \
   --no-ablations \
