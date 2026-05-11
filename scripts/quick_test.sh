@@ -8,7 +8,7 @@ set -euo pipefail
 
 echo "=== D-ICL Quick Smoke Test ==="
 echo "Rounds  : 2"
-echo "Dataset : breast_cancer"
+echo "Dataset : vehicle"
 echo "Backbone: tabicl"
 echo ""
 
